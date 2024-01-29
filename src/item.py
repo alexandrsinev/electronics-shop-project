@@ -22,6 +22,12 @@ class Item:
         self.quantity = quantity
         Item.all.append(self)
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}('{self.__name}', {self.price}, {self.quantity})"
+
+    def __str__(self):
+        return f'{self.__name}'
+
     def calculate_total_price(self) -> float:
         """
         Рассчитывает общую стоимость конкретного товара в магазине.
@@ -43,10 +49,8 @@ class Item:
     @name.setter
     def name(self, name):
         """ Принимает название товара, обрезает название на длинну не больше 10 символов"""
-        if len(name) > 10:
-            self.__name = name[:10]
-        else:
-            self.__name = name
+
+        self.__name = name[:10]
 
     @classmethod
     def instantiate_from_csv(cls, f):
@@ -62,3 +66,5 @@ class Item:
     def string_to_number(str_number):
         number = int(float(str_number))
         return number
+
+
