@@ -28,6 +28,16 @@ class Item:
     def __str__(self):
         return f'{self.__name}'
 
+    def __add__(self, other):
+        """
+        Метод производит сложение количества товара
+        """
+
+        if not isinstance(other, Item):
+            raise ValueError('Складывать можно только объекты Item и дочерние от них.')
+        else:
+            return self.quantity + other.quantity
+
     def calculate_total_price(self) -> float:
         """
         Рассчитывает общую стоимость конкретного товара в магазине.
