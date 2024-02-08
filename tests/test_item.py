@@ -5,6 +5,8 @@ from src.item import Item
 
 from src.phone import Phone
 
+from src.keyboard import Keyboard
+
 
 @pytest.fixture
 def item1():
@@ -19,6 +21,11 @@ def item2():
 @pytest.fixture
 def phone():
     return Phone("iPhone 14", 120_000, 5, 2)
+
+
+@pytest.fixture
+def keyboard():
+    return Keyboard('Dark Project KD87A', 9600, 5)
 
 
 def test_total_price1(item1):
@@ -54,9 +61,10 @@ def test_for_repr(item1, phone):
     assert repr(phone) == "Phone('iPhone 14', 120000, 5, 2)"
 
 
-def test_for_str(item1, phone):
+def test_for_str(item1, phone, keyboard):
     assert str(item1) == 'Смартфон'
     assert str(phone) == 'iPhone 14'
+    assert str(keyboard) == "Dark Project KD87A"
 
 
 def test_apply_discount(item1):
@@ -75,3 +83,14 @@ def test_number_of_sim(phone):
     assert phone.number_of_sim == 2
     with pytest.raises(ValueError):
         phone.number_of_sim = 0
+
+
+def test_change_lang(keyboard):
+    assert str(keyboard.language) == "EN"
+
+    keyboard.change_lang()
+    assert str(keyboard.language) == "RU"
+
+    keyboard.change_lang()
+    assert str(keyboard.language) == "EN"
+
