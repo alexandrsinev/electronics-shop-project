@@ -3,6 +3,10 @@ import os
 from config import ROOT_DIR
 
 
+class InstantiateCSVError(Exception):
+    def __init__(self):
+        self.message = 'InstantiateCSVError: Файл item.csv поврежден'
+
 
 
 class Item:
@@ -11,7 +15,6 @@ class Item:
     """
     pay_rate = 1.0
     all = []
-
 
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """
@@ -65,17 +68,27 @@ class Item:
 
     @classmethod
     def instantiate_from_csv(cls, f):
-        file = os.path.join(ROOT_DIR, f)
-        cls.all = []
-        with open(file, newline='') as csv_file:
-            reader = csv.DictReader(csv_file)
+        try:
+            file = os.path.join(ROOT_DIR, f)
+            cls.all = []
+            with open(file, newline='') as csv_file:
+                reader = csv.DictReader(csv_file)
+                for row in reader:
+                    if row['name'] is None or row['price'] is None or row['quantity'] is None:
+                        raise InstantiateCSVError
+                    else:
+                        cls(row['name'], float(row['price']), int(row['quantity']))
+        except InstantiateCSVError as e:
+            print(e.message)
+            raise InstantiateCSVError
 
-            for row in reader:
-                cls(row['name'], float(row['price']), int(row['quantity']))
+        except FileNotFoundError:
+            print('FileNotFoundError: Отсутствует файл item.csv')
+
 
     @staticmethod
     def string_to_number(str_number):
         number = int(float(str_number))
         return number
 
-
+# Item.instantiate_from_csv('src/items.csv')

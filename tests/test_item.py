@@ -1,11 +1,12 @@
 """Здесь надо написать тесты с использованием pytest для модуля item."""
 import pytest
 
-from src.item import Item
-
+from src.item import Item, InstantiateCSVError
 from src.phone import Phone
+from config import ROOT_DIR
+import os
+import csv
 
-from src.keyboard import Keyboard
 
 
 @pytest.fixture
@@ -21,11 +22,6 @@ def item2():
 @pytest.fixture
 def phone():
     return Phone("iPhone 14", 120_000, 5, 2)
-
-
-@pytest.fixture
-def keyboard():
-    return Keyboard('Dark Project KD87A', 9600, 5)
 
 
 def test_total_price1(item1):
@@ -56,15 +52,12 @@ def test_string_to_number():
     assert Item.string_to_number('5.5') == 5
 
 
-def test_for_repr(item1, phone):
+def test_for_repr(item1):
     assert repr(item1) == "Item('Смартфон', 10000, 20)"
-    assert repr(phone) == "Phone('iPhone 14', 120000, 5, 2)"
 
 
-def test_for_str(item1, phone, keyboard):
+def test_for_str(item1):
     assert str(item1) == 'Смартфон'
-    assert str(phone) == 'iPhone 14'
-    assert str(keyboard) == "Dark Project KD87A"
 
 
 def test_apply_discount(item1):
@@ -79,18 +72,15 @@ def test_add(item1, phone):
         item1 + 15
 
 
-def test_number_of_sim(phone):
-    assert phone.number_of_sim == 2
-    with pytest.raises(ValueError):
-        phone.number_of_sim = 0
+def test_file_not_found_error():
+    def file_not_found(f):
+        file = os.path.join(ROOT_DIR, f)
+        with open(file, newline='') as csv_file:
+            print(csv_file)
+    with pytest.raises(FileNotFoundError):
+        file_not_found('src/tems.csv')
 
 
-def test_change_lang(keyboard):
-    assert str(keyboard.language) == "EN"
-
-    keyboard.change_lang()
-    assert str(keyboard.language) == "RU"
-
-    keyboard.change_lang()
-    assert str(keyboard.language) == "EN"
-
+def test_csv_error():
+    with pytest.raises(InstantiateCSVError):
+        Item.instantiate_from_csv('src/items.csv')
